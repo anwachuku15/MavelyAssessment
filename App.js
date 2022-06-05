@@ -14,12 +14,8 @@ import {
 	TransitionPresets,
 } from "@react-navigation/stack";
 
-import {
-	ApolloClient,
-	InMemoryCache,
-	ApolloProvider,
-	createHttpLink,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
 import { setContext } from "@apollo/client/link/context";
 import { getProducts } from "./graphql/queries";
 import Welcome from "./screens/Onboarding/Welcome";
@@ -29,7 +25,7 @@ import Colors from "./constants/Colors";
 export default function App() {
 	// TODO: Set up Apollo Client
 	const client = new ApolloClient({
-		uri: "https://mavely.top",
+		uri: "https://mavely.top/",
 		cache: new InMemoryCache(),
 	});
 

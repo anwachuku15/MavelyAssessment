@@ -1,20 +1,51 @@
-import { View, Text } from "react-native";
 import React from "react";
+import { View, Text, ActivityIndicator, Alert } from "react-native";
 import Colors from "../../constants/Colors";
 import TouchableCmp from "../atoms/TouchableCmp";
 import { useNavigation } from "@react-navigation/native";
 
-const SignupButton = ({ signUpForm }) => {
+import { useMutation } from "@apollo/client";
+import { SIGN_UP } from "../../graphql/mutations";
+
+// TODO: ERROR HANDLING
+
+/* 
+RES.DATA.SIGNUP
+	Object {
+		__typename
+		email
+		id
+		name
+		refreshToken
+		token
+	}
+*/
+
+const SignupButton = ({ formData }) => {
 	const navigation = useNavigation();
+	const [signUp, { data, loading, error }] = useMutation(SIGN_UP);
+
+	const onSignUp = () => {
+		if (formData) {
+			signUp({ variables: { data: formData } })
+				.then((res) => {
+					console.log(res.data.signup);
+					// TODO: save res.data.signup to expo-secure-store
+				})
+				.catch((err) => {
+					Alert.alert("Uh oh...", `${err.message}`, [
+						{ text: "Try Again", style: "cancel" },
+					]);
+					console.log(err.message);
+				});
+		} else {
+			navigation.navigate("SignUp");
+		}
+	};
+
 	return (
 		<TouchableCmp
-			onPress={() => {
-				if (signUpForm) {
-					console.log("SIGN UP");
-				} else {
-					navigation.navigate("SignUp");
-				}
-			}}
+			onPress={onSignUp}
 			style={{
 				borderWidth: 2,
 				borderColor: Colors.purple,
@@ -25,9 +56,17 @@ const SignupButton = ({ signUpForm }) => {
 				backgroundColor: Colors.purple,
 			}}
 		>
-			<Text style={{ fontWeight: "bold", color: "white" }}>
-				{signUpForm ? "Sign up" : "Create an Account"}
-			</Text>
+			{formData ? (
+				!loading ? (
+					<Text style={{ fontWeight: "bold", color: "white" }}>Sign up</Text>
+				) : (
+					<ActivityIndicator size="small" color="white" />
+				)
+			) : (
+				<Text style={{ fontWeight: "bold", color: "white" }}>
+					Create an Account
+				</Text>
+			)}
 		</TouchableCmp>
 	);
 };

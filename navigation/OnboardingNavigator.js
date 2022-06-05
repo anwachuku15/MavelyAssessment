@@ -15,6 +15,8 @@ const OnboardingNavigator = () => {
 	const navigation = useNavigation();
 	const OnboardingStack = createStackNavigator();
 
+	const offset = 0;
+
 	return (
 		<OnboardingStack.Navigator screenOptions={() => ({ headerShown: false })}>
 			<OnboardingStack.Screen
@@ -29,9 +31,6 @@ const OnboardingNavigator = () => {
 					...TransitionPresets.ModalPresentationIOS,
 					// TODO: Conditional gesture based on ScrollView
 					gestureResponseDistance: screenHeight,
-					cardStyle: {
-						// backgroundColor: "black",
-					},
 				})}
 			/>
 			<OnboardingStack.Screen
@@ -41,9 +40,6 @@ const OnboardingNavigator = () => {
 					...TransitionPresets.ModalPresentationIOS,
 					// TODO: Conditional gesture based on ScrollView
 					gestureResponseDistance: screenHeight,
-					cardStyle: {
-						// backgroundColor: "black",
-					},
 				})}
 			/>
 		</OnboardingStack.Navigator>

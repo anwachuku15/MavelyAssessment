@@ -79,7 +79,7 @@ const Welcome = () => {
 			: ["transparent", "transparent", "rgba(255,255,255,0.8)", "white"];
 	return (
 		<View style={styles.container}>
-			<Video
+			{/* <Video
 				source={require("../../assets/outfit.mp4")}
 				style={styles.bgVideo}
 				ref={video}
@@ -89,7 +89,7 @@ const Welcome = () => {
 				isMuted
 				rate={1.0}
 				shouldPlay
-			/>
+			/> */}
 			<LinearGradient colors={gradient} style={styles.bgVideo} />
 			{/* <BlurView intensity={10} tint="dark" style={styles.blurContainer}> */}
 			<View style={styles.carouselWrapper}>

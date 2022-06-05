@@ -30,7 +30,7 @@ const OnboardingNavigator = () => {
 					// TODO: Conditional gesture based on ScrollView
 					gestureResponseDistance: screenHeight,
 					cardStyle: {
-						backgroundColor: "black",
+						// backgroundColor: "black",
 					},
 				})}
 			/>
@@ -42,7 +42,7 @@ const OnboardingNavigator = () => {
 					// TODO: Conditional gesture based on ScrollView
 					gestureResponseDistance: screenHeight,
 					cardStyle: {
-						backgroundColor: "black",
+						// backgroundColor: "black",
 					},
 				})}
 			/>

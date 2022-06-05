@@ -1,19 +1,24 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, {
+	useRef,
+	useState,
+	useEffect,
+	useCallback,
+	createRef,
+} from "react";
 import {
 	View,
 	Text,
 	StyleSheet,
 	Dimensions,
 	Animated,
-	Image,
-	FlatList,
+	useColorScheme,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 
 import LoginButton from "../../components/molecules/LoginButton";
 import SignupButton from "../../components/molecules/SignupButton";
 import { welcomeData } from "../../constants/CarouselData";
-import CarouselItem from "../../components/organisms/CarouselItem";
+import CarouselItem from "../../components/molecules/CarouselItem";
 import Indicator from "../../components/molecules/Indicator";
 import { Video, AVPlaybackStatus } from "expo-av";
 // import Video from "react-native-video";
@@ -21,18 +26,21 @@ import VideoPlayer from "expo-video-player";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
+import useInterval from "use-interval";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
 const Welcome = () => {
-	const navigation = useNavigation();
+	const scheme = useColorScheme();
+	const { text } = useTheme().colors;
 	const video = useRef(null);
-	const [status, setStatus] = useState();
 
 	// Keep track of componenent values so on re-render, values don't change
 	const scrollX = useRef(new Animated.Value(0)).current;
 
-	let flatListRef = useRef();
+	const flatListRef = createRef();
+	// const [scrollValue, setScrollValue] = useState(0);
+	// const [scrolled, setScrolled] = useState(0);
 
 	// TODO: CLEAR INTERVAL WHEN DRAGGED
 	const infiniteScroll = (data) => {
@@ -40,7 +48,7 @@ const Welcome = () => {
 		let scrolled = 0;
 
 		if (flatListRef.current) {
-			const myInterval = setInterval(() => {
+			setInterval(() => {
 				scrolled++;
 				if (scrolled < data.length) {
 					scrollValue = scrollValue + screenWidth;
@@ -49,7 +57,7 @@ const Welcome = () => {
 					scrolled = 0;
 				}
 
-				flatListRef.current.scrollToOffset({
+				flatListRef?.current?.scrollToOffset({
 					animated: true,
 					offset: scrollValue,
 				});
@@ -61,6 +69,14 @@ const Welcome = () => {
 		infiniteScroll(welcomeData);
 	});
 
+	const renderItem = ({ item }) => {
+		return <CarouselItem item={item} text={text} />;
+	};
+
+	const gradient =
+		scheme === "dark"
+			? ["transparent", "transparent", "rgba(0,0,0,0.95)", "rgba(32, 3, 90,1)"]
+			: ["transparent", "transparent", "rgba(255,255,255,0.8)", "white"];
 	return (
 		<View style={styles.container}>
 			<Video
@@ -74,15 +90,7 @@ const Welcome = () => {
 				rate={1.0}
 				shouldPlay
 			/>
-			<LinearGradient
-				colors={[
-					"transparent",
-					"transparent",
-					"rgba(0,0,0,0.95)",
-					"rgba(32, 3, 90,1)",
-				]}
-				style={styles.bgVideo}
-			/>
+			<LinearGradient colors={gradient} style={styles.bgVideo} />
 			{/* <BlurView intensity={10} tint="dark" style={styles.blurContainer}> */}
 			<View style={styles.carouselWrapper}>
 				<Animated.FlatList
@@ -90,12 +98,15 @@ const Welcome = () => {
 					scrollEventThrottle={32}
 					onScroll={Animated.event(
 						[{ nativeEvent: { contentOffset: { x: scrollX } } }],
-						{ useNativeDriver: false }
+						{
+							useNativeDriver: false,
+							listener: (event) => {},
+						}
 					)}
 					// onScrollEndDrag={}
 					data={welcomeData}
 					keyExtractor={(item) => item.id}
-					renderItem={CarouselItem}
+					renderItem={renderItem}
 					horizontal
 					pagingEnabled
 					showsHorizontalScrollIndicator={false}

@@ -1,10 +1,14 @@
 import React, { useCallBack, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Appearance } from "react-native";
+import { StyleSheet, useColorScheme } from "react-native";
 import TouchableCmp from "./components/atoms/TouchableCmp";
 import * as SplashScreen from "expo-splash-screen";
 
-import { NavigationContainer } from "@react-navigation/native";
+import {
+	NavigationContainer,
+	DefaultTheme,
+	DarkTheme,
+} from "@react-navigation/native";
 import {
 	createStackNavigator,
 	TransitionPresets,
@@ -20,6 +24,7 @@ import { setContext } from "@apollo/client/link/context";
 import { getProducts } from "./graphql/queries";
 import Welcome from "./screens/Onboarding/Welcome";
 import OnboardingNavigator from "./navigation/OnboardingNavigator";
+import Colors from "./constants/Colors";
 
 export default function App() {
 	// TODO: Set up Apollo Client
@@ -39,15 +44,30 @@ export default function App() {
 
 	const RootStack = createStackNavigator();
 
+	const darkTheme = {
+		dark: true,
+		colors: {
+			...DarkTheme.colors,
+			primary: Colors.purple,
+		},
+	};
+
+	const lightTheme = {
+		dark: false,
+		colors: {
+			...DefaultTheme.colors,
+			primary: Colors.purple,
+		},
+	};
+
+	const scheme = useColorScheme();
+
 	return (
 		<ApolloProvider client={client}>
-			<NavigationContainer>
+			<StatusBar style="auto" />
+			<NavigationContainer theme={scheme === "dark" ? darkTheme : lightTheme}>
 				<OnboardingNavigator />
 			</NavigationContainer>
-			{/* <View style={styles.container}>
-				<Welcome />
-				<StatusBar style="light" />
-			</View> */}
 		</ApolloProvider>
 	);
 }

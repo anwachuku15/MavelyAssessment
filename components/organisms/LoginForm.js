@@ -18,11 +18,11 @@ const LoginForm = () => {
 
 	const onChangeEmail = (text) => {
 		setState({ ...state, email: text });
-		if (emailRegex.test(text)) {
-			console.log("valid");
-		} else {
-			console.log("invalid");
-		}
+		// if (emailRegex.test(text)) {
+		// 	console.log("valid");
+		// } else {
+		// 	console.log("invalid");
+		// }
 	};
 
 	const onChangePassword = (text) => {

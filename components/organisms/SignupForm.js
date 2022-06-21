@@ -16,24 +16,12 @@ import TouchableCmp from "../atoms/TouchableCmp";
 
 import { useNavigation, useTheme } from "@react-navigation/native";
 
-import { useQuery } from "@apollo/client";
-import { signUp } from "../../graphql/mutations";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { SIGN_UP } from "../../graphql/mutations";
 
 const SignupForm = () => {
 	const navigation = useNavigation();
 	const { text, card, primary } = useTheme().colors;
-
-	const onScroll = (e) => {
-		const currentOffset = e.nativeEvent.contentOffset.y;
-
-		if (currentOffset <= 0) {
-			setBounces(false);
-		} else {
-			setBounces(true);
-		}
-	};
-
-	// const { loading, error, data } = useQuery();
 
 	const [state, setState] = useState({
 		name: "",
@@ -48,17 +36,20 @@ const SignupForm = () => {
 
 	const onChangeEmail = (text) => {
 		setState({ ...state, email: text });
-		if (emailRegex.test(text)) {
-			console.log("valid");
-		} else {
-			console.log("invalid");
-		}
+		// if (emailRegex.test(text)) {
+		// 	console.log("valid");
+		// } else {
+		// 	console.log("invalid");
+		// }
 	};
 
 	const onChangePassword = (text) => {
 		setState({ ...state, password: text });
 	};
 
+	const onCancel = () => {
+		navigation.goBack();
+	};
 	return (
 		// <ScrollView
 		// 	style={{ paddingHorizontal: 20, height: "100%" }}
@@ -125,7 +116,7 @@ const SignupForm = () => {
 							<SignupButton formData={state} />
 						</View>
 						<View style={{ width: "30%" }}>
-							<TouchableCmp onPress={() => navigation.goBack()}>
+							<TouchableCmp onPress={onCancel}>
 								<Text
 									style={{
 										color: primary,

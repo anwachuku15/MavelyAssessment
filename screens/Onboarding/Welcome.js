@@ -27,10 +27,12 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import useInterval from "use-interval";
+import TouchableCmp from "../../components/atoms/TouchableCmp";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
 const Welcome = () => {
+	const navigation = useNavigation();
 	const scheme = useColorScheme();
 	const { text } = useTheme().colors;
 	const video = useRef(null);
@@ -79,7 +81,7 @@ const Welcome = () => {
 			: ["transparent", "transparent", "rgba(255,255,255,0.8)", "white"];
 	return (
 		<View style={styles.container}>
-			{/* <Video
+			<Video
 				source={require("../../assets/outfit.mp4")}
 				style={styles.bgVideo}
 				ref={video}
@@ -89,7 +91,7 @@ const Welcome = () => {
 				isMuted
 				rate={1.0}
 				shouldPlay
-			/> */}
+			/>
 			<LinearGradient colors={gradient} style={styles.bgVideo} />
 			{/* <BlurView intensity={10} tint="dark" style={styles.blurContainer}> */}
 			<View style={styles.carouselWrapper}>
@@ -119,6 +121,27 @@ const Welcome = () => {
 				<View style={{ width: "65%" }}>
 					<SignupButton />
 				</View>
+			</View>
+
+			<View>
+				<TouchableCmp
+					onPress={() => navigation.navigate("NetworkLogger")}
+					style={{ width: "40%" }}
+				>
+					<View
+						style={{
+							alignItems: "center",
+							justifyContent: "center",
+							borderRadius: 10,
+							marginTop: 5,
+							height: 40,
+							width: 100,
+							backgroundColor: "red",
+						}}
+					>
+						<Text style={{ color: "white" }}>NETWORK</Text>
+					</View>
+				</TouchableCmp>
 			</View>
 
 			<Indicator scrollX={scrollX} />

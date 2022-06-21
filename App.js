@@ -1,7 +1,6 @@
-import React, { useCallBack, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, useColorScheme } from "react-native";
-import TouchableCmp from "./components/atoms/TouchableCmp";
+import { useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
 import {
@@ -9,36 +8,33 @@ import {
 	DefaultTheme,
 	DarkTheme,
 } from "@react-navigation/native";
-import {
-	createStackNavigator,
-	TransitionPresets,
-} from "@react-navigation/stack";
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import { onError } from "@apollo/client/link/error";
+import {
+	ApolloClient,
+	InMemoryCache,
+	ApolloProvider,
+	createHttpLink,
+	from,
+} from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { getProducts } from "./graphql/queries";
-import Welcome from "./screens/Onboarding/Welcome";
+import { onError } from "@apollo/client/link/error";
 import OnboardingNavigator from "./navigation/OnboardingNavigator";
 import Colors from "./constants/Colors";
+import LoadingScreen from "./screens/LoadingScreen";
+import { enableScreens } from "react-native-screens";
+import BottomTabs from "./navigation/BottomTabs";
+import { startNetworkLogging } from "react-native-network-logger";
+
+import { initialState, reducer } from "./context/reducer";
+import { StateProvider, useStateValue } from "./context/StateProvider";
+
+// import { client } from "./graphql/client";
 
 export default function App() {
-	// TODO: Set up Apollo Client
-	const client = new ApolloClient({
-		uri: "https://mavely.top/",
-		cache: new InMemoryCache(),
-	});
+	startNetworkLogging();
+	enableScreens();
 
-	// const httpLink = createHttpLink({
-	//   uri: '/graphql'
-	// })
-	// const authLink = setContext((_, {headers}) => {
-
-	// })
-
-	const [appIsReady, setAppIsReady] = useState(false);
-
-	const RootStack = createStackNavigator();
+	const scheme = useColorScheme();
 
 	const darkTheme = {
 		dark: true,
@@ -56,23 +52,93 @@ export default function App() {
 		},
 	};
 
-	const scheme = useColorScheme();
+	// TODO: TEST AUTH FLOW;
+	// const [state, dispatch] = useStateValue();
+	const [token, setToken] = useState();
+
+	const httpLink = createHttpLink({
+		uri: "https://mavely.top",
+	});
+	const authLink = setContext((_, { headers }) => {
+		return {
+			headers: {
+				...headers,
+				accept: "application/json",
+				"Content-Type": "application/json",
+				authorization: token ? `Bearer ${token}` : "",
+			},
+		};
+	});
+	const errorLink = onError(({ graphQLErrors, networkError }) => {
+		if (graphQLErrors)
+			graphQLErrors.forEach(({ message, locations, path }) => {
+				console.log(
+					`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+				);
+				console.log(locations);
+				console.log(path);
+			});
+
+		if (networkError) console.log(`[Network error]: ${networkError}`);
+	});
+
+	const client = new ApolloClient({
+		link: errorLink.concat(authLink.concat(httpLink)),
+		cache: new InMemoryCache({
+			// custom merge function to append new query results to existing cache data
+			typePolicies: {
+				Products: {
+					fields: {
+						products: {
+							keyArgs: false,
+							merge(existing = [], incoming) {
+								return [...existing, ...incoming];
+							},
+						},
+					},
+				},
+			},
+		}),
+	});
+
+	const AppNavigator = () => {
+		const [{ isLoading }, dispatch] = useStateValue();
+
+		const logout = async () => {
+			client.resetStore();
+		};
+
+		return isLoading ? (
+			<LoadingScreen setToken={setToken} />
+		) : token ? (
+			<BottomTabs />
+		) : (
+			<OnboardingNavigator />
+		);
+	};
+
+	// TODO: LOADING CACHE
+	// const [loadingCache, setLoadingCache] = useState(true);
+
+	// useEffect(() => {
+	// 	persistCache({
+	// 		cache,
+	// 		storage: AsyncStorage,
+	// 	}).then(() => setLoadingCache(false));
+	// }, []);
+
+	// if (loadingCache) {
+	// 	return <AppLoading />;
+	// }
 
 	return (
 		<ApolloProvider client={client}>
-			<StatusBar style="auto" />
-			<NavigationContainer theme={scheme === "dark" ? darkTheme : lightTheme}>
-				<OnboardingNavigator />
-			</NavigationContainer>
+			<StateProvider initialState={initialState} reducer={reducer}>
+				<StatusBar style="auto" />
+				<NavigationContainer theme={scheme === "dark" ? darkTheme : lightTheme}>
+					<AppNavigator />
+				</NavigationContainer>
+			</StateProvider>
 		</ApolloProvider>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});

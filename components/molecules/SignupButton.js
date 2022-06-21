@@ -4,8 +4,12 @@ import Colors from "../../constants/Colors";
 import TouchableCmp from "../atoms/TouchableCmp";
 import { useNavigation } from "@react-navigation/native";
 
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { SIGN_UP } from "../../graphql/mutations";
+
+import * as SecureStore from "expo-secure-store";
+import { GET_PRODUCTS } from "../../graphql/queries";
+import { useStateValue } from "../../context/StateProvider";
 
 // TODO: ERROR HANDLING
 
@@ -22,23 +26,36 @@ RES.DATA.SIGNUP
 */
 
 const SignupButton = ({ formData }) => {
+	const [signup, { data, loading, error, client }] = useMutation(SIGN_UP);
 	const navigation = useNavigation();
-	const [signUp, { data, loading, error }] = useMutation(SIGN_UP);
 
-	const onSignUp = () => {
+	const [{ isLoading }, dispatch] = useStateValue();
+
+	const onSignUp = async () => {
 		if (formData) {
-			signUp({ variables: { data: formData } })
-				.then((res) => {
-					console.log(res.data.signup);
-					// TODO: save res.data.signup to expo-secure-store
-				})
-				.catch((err) => {
-					Alert.alert("Uh oh...", `${err.message}`, [
-						{ text: "Try Again", style: "cancel" },
-					]);
-					console.log(err.message);
+			try {
+				const userInfo = await signup({ variables: { data: formData } });
+				await SecureStore.setItemAsync(
+					"user",
+					JSON.stringify(userInfo.data.signup)
+				);
+				dispatch({
+					type: "SET_USER",
+					user: userInfo.data.signup,
 				});
+				dispatch({
+					type: "SET_LOADING",
+					isLoading: true,
+				});
+			} catch (err) {
+				console.log(error);
+				Alert.alert("Uh oh...", `${err.message}`, [
+					{ text: "Try Again", style: "cancel" },
+				]);
+			}
 		} else {
+			const user = await SecureStore.getItemAsync("user");
+			console.log(JSON.parse(user));
 			navigation.navigate("SignUp");
 		}
 	};

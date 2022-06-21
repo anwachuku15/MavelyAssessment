@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Dimensions } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import {
 	createStackNavigator,
 	TransitionPresets,
@@ -8,14 +7,15 @@ import {
 import Welcome from "../screens/Onboarding/Welcome";
 import Login from "../screens/Onboarding/Login";
 import SignUp from "../screens/Onboarding/SignUp";
+import Network from "../screens/Network";
+import NetworkLogger from "react-native-network-logger";
 
 const screenHeight = Dimensions.get("screen").height;
 
 const OnboardingNavigator = () => {
-	const navigation = useNavigation();
 	const OnboardingStack = createStackNavigator();
 
-	const offset = 0;
+	// const offset = 0;
 
 	return (
 		<OnboardingStack.Navigator screenOptions={() => ({ headerShown: false })}>
@@ -40,6 +40,14 @@ const OnboardingNavigator = () => {
 					...TransitionPresets.ModalPresentationIOS,
 					// TODO: Conditional gesture based on ScrollView
 					gestureResponseDistance: screenHeight,
+				})}
+			/>
+			<OnboardingStack.Screen
+				name="NetworkLogger"
+				component={Network}
+				options={() => ({
+					...TransitionPresets.ModalPresentationIOS,
+					// gestureResponseDistance: screenHeight,
 				})}
 			/>
 		</OnboardingStack.Navigator>

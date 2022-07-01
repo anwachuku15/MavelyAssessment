@@ -86,7 +86,6 @@ export default function App() {
 	const client = new ApolloClient({
 		link: errorLink.concat(authLink.concat(httpLink)),
 		cache: new InMemoryCache({
-			// custom merge function to append new query results to existing cache data
 			typePolicies: {
 				Products: {
 					fields: {

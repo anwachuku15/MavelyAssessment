@@ -4,20 +4,13 @@ import {
 	Text,
 	TextInput,
 	StyleSheet,
-	ScrollView,
 	KeyboardAvoidingView,
 	Platform,
-	useColorScheme,
 } from "react-native";
 import SignupButton from "../molecules/SignupButton";
-import { emailRegex } from "../../constants/validation";
-import Colors from "../../constants/Colors";
 import TouchableCmp from "../atoms/TouchableCmp";
 
 import { useNavigation, useTheme } from "@react-navigation/native";
-
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import { SIGN_UP } from "../../graphql/mutations";
 
 const SignupForm = () => {
 	const navigation = useNavigation();
@@ -36,11 +29,6 @@ const SignupForm = () => {
 
 	const onChangeEmail = (text) => {
 		setState({ ...state, email: text });
-		// if (emailRegex.test(text)) {
-		// 	console.log("valid");
-		// } else {
-		// 	console.log("invalid");
-		// }
 	};
 
 	const onChangePassword = (text) => {
@@ -51,12 +39,6 @@ const SignupForm = () => {
 		navigation.goBack();
 	};
 	return (
-		// <ScrollView
-		// 	style={{ paddingHorizontal: 20, height: "100%" }}
-		// 	indicatorStyle="white"
-		// 	showsVerticalScrollIndicator
-		// 	bounces={bounces}
-		// >
 		<KeyboardAvoidingView
 			behavior="padding"
 			key={Platform.select({ ios: 85, android: 500 })}
@@ -132,7 +114,6 @@ const SignupForm = () => {
 				</View>
 			</View>
 		</KeyboardAvoidingView>
-		// </ScrollView>
 	);
 };
 

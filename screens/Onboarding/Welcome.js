@@ -93,7 +93,6 @@ const Welcome = () => {
 				shouldPlay
 			/>
 			<LinearGradient colors={gradient} style={styles.bgVideo} />
-			{/* <BlurView intensity={10} tint="dark" style={styles.blurContainer}> */}
 			<View style={styles.carouselWrapper}>
 				<Animated.FlatList
 					ref={flatListRef}
@@ -105,7 +104,6 @@ const Welcome = () => {
 							listener: (event) => {},
 						}
 					)}
-					// onScrollEndDrag={}
 					data={welcomeData}
 					keyExtractor={(item) => item.id}
 					renderItem={renderItem}
@@ -123,7 +121,7 @@ const Welcome = () => {
 				</View>
 			</View>
 
-			<View>
+			{/* <View>
 				<TouchableCmp
 					onPress={() => navigation.navigate("NetworkLogger")}
 					style={{ width: "40%" }}
@@ -142,10 +140,9 @@ const Welcome = () => {
 						<Text style={{ color: "white" }}>NETWORK</Text>
 					</View>
 				</TouchableCmp>
-			</View>
+			</View> */}
 
 			<Indicator scrollX={scrollX} />
-			{/* </BlurView> */}
 		</View>
 	);
 };

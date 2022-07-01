@@ -23,3 +23,9 @@ export const LOG_IN = gql`
 		}
 	}
 `;
+
+export const LOG_OUT = gql`
+	mutation Logout {
+		logout
+	}
+`;

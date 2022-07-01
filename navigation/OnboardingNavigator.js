@@ -8,14 +8,11 @@ import Welcome from "../screens/Onboarding/Welcome";
 import Login from "../screens/Onboarding/Login";
 import SignUp from "../screens/Onboarding/SignUp";
 import Network from "../screens/Network";
-import NetworkLogger from "react-native-network-logger";
 
 const screenHeight = Dimensions.get("screen").height;
 
 const OnboardingNavigator = () => {
 	const OnboardingStack = createStackNavigator();
-
-	// const offset = 0;
 
 	return (
 		<OnboardingStack.Navigator screenOptions={() => ({ headerShown: false })}>

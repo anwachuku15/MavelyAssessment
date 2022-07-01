@@ -1,9 +1,8 @@
 import { useTheme } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
-import { useHeaderHeight } from "@react-navigation/elements";
+
 const ProductDetail = ({ route, otherRoute, showing }) => {
 	const { item } = route.params;
 	const { text } = useTheme().colors;
@@ -13,7 +12,7 @@ const ProductDetail = ({ route, otherRoute, showing }) => {
 		<ScrollView contentContainerStyle={styles.container}>
 			<SharedElement
 				id={item.id ? item.id : item.node.id}
-				style={{ width: "100%", height: 400 }}
+				style={{ width: "100%", height: 400, marginBottom: 10 }}
 			>
 				<Image
 					source={
@@ -23,9 +22,7 @@ const ProductDetail = ({ route, otherRoute, showing }) => {
 							? img
 							: require("../../assets/noimage.png")
 					}
-					// source={item.node.image ? img : require("../../assets/noimage.png")}
 					onError={(e) => {
-						// console.log(e.nativeEvent.error);
 						setImg(require("../../assets/noimage.png"));
 					}}
 					resizeMode="contain"
@@ -47,25 +44,8 @@ const ProductDetail = ({ route, otherRoute, showing }) => {
 	);
 };
 
-// ProductDetail.sharedElements = (route) => {
-// 	const { item } = route.params;
-// 	return [
-// 		{
-// 			id: `${item.image.src}`,
-// 			animation: "move",
-// 			resize: "clip",
-// 		},
-// 		{
-// 			id: "productInfo",
-// 			animation: "move",
-// 			resize: "clip",
-// 		},
-// 	];
-// };
-
 const styles = StyleSheet.create({
 	container: {
-		// flex: 1,
 		alignItems: "center",
 		paddingBottom: 40,
 	},

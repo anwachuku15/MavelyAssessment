@@ -18,11 +18,6 @@ const LoginForm = () => {
 
 	const onChangeEmail = (text) => {
 		setState({ ...state, email: text });
-		// if (emailRegex.test(text)) {
-		// 	console.log("valid");
-		// } else {
-		// 	console.log("invalid");
-		// }
 	};
 
 	const onChangePassword = (text) => {
@@ -30,7 +25,6 @@ const LoginForm = () => {
 	};
 
 	return (
-		// <ScrollView style={{ marginHorizontal: 20, height: "100%" }}>
 		<View>
 			<View style={{ height: 50 }} />
 			<View style={{ marginVertical: 30 }}>
@@ -89,12 +83,8 @@ const LoginForm = () => {
 						</TouchableCmp>
 					</View>
 				</View>
-				<TouchableCmp style={{ marginTop: 18 }}>
-					<Text style={{ color: text }}>Forgot Password?</Text>
-				</TouchableCmp>
 			</View>
 		</View>
-		// </ScrollView>
 	);
 };
 

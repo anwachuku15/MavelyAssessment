@@ -24,6 +24,7 @@ import LoadingScreen from "./screens/LoadingScreen";
 import { enableScreens } from "react-native-screens";
 import BottomTabs from "./navigation/BottomTabs";
 import { startNetworkLogging } from "react-native-network-logger";
+import * as SecureStore from "expo-secure-store";
 
 import { initialState, reducer } from "./context/reducer";
 import { StateProvider, useStateValue } from "./context/StateProvider";
@@ -102,11 +103,20 @@ export default function App() {
 	});
 
 	const AppNavigator = () => {
-		const [{ isLoading }, dispatch] = useStateValue();
+		const [{ isLoading, token }, dispatch] = useStateValue();
 
 		const logout = async () => {
-			client.resetStore();
+			try {
+				await SecureStore.deleteItemAsync("user");
+				dispatch({
+					type: "LOGOUT",
+				});
+				client.resetStore();
+			} catch (err) {
+				console.log(err);
+			}
 		};
+		console.log(token);
 
 		return isLoading ? (
 			<LoadingScreen setToken={setToken} />

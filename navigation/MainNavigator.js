@@ -9,7 +9,6 @@ import Home from "../screens/Auth/Home";
 import ProductDetail from "../screens/Auth/ProductDetail";
 import Colors from "../constants/Colors";
 import SearchScreen from "../screens/Auth/SearchScreen";
-import { useTheme } from "@react-navigation/native";
 import ResultsScreen from "../screens/Auth/ResultsScreen";
 
 const MainStack = createSharedElementStackNavigator();
@@ -66,7 +65,16 @@ const MainNavigator = () => {
 					},
 				})}
 			/>
-			<MainStack.Screen name="ResultsScreen" component={ResultsScreen} />
+			<MainStack.Screen
+				name="ResultsScreen"
+				component={ResultsScreen}
+				options={({ route, navigation }) => ({
+					headerTitle:
+						route.params._searchInput === ""
+							? "All Products"
+							: `Results for ${route.params._searchInput}`,
+				})}
+			/>
 		</MainStack.Navigator>
 	);
 };

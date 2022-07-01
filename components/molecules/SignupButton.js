@@ -11,8 +11,6 @@ import * as SecureStore from "expo-secure-store";
 import { GET_PRODUCTS } from "../../graphql/queries";
 import { useStateValue } from "../../context/StateProvider";
 
-// TODO: ERROR HANDLING
-
 /* 
 RES.DATA.SIGNUP
 	Object {

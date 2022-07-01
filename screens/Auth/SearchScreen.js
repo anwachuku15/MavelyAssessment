@@ -14,7 +14,6 @@ const SearchScreen = () => {
 			header: () => {
 				return (
 					<SafeAreaView style={{ flexDirection: "row" }}>
-						{/* <HeaderBackButton onPress={() => navigation.goBack()} /> */}
 						<SearchBar />
 					</SafeAreaView>
 				);

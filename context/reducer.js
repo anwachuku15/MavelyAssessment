@@ -19,6 +19,15 @@ export const reducer = (state, action) => {
 				...state,
 				user: action.user,
 			};
+		case "LOGOUT":
+			return {
+				token: null,
+				user: null,
+				isLoading: true,
+				searchResults: [],
+				queryInput: "",
+				after: null,
+			};
 		case "SET_LOADING":
 			return {
 				...state,
@@ -30,7 +39,6 @@ export const reducer = (state, action) => {
 				searchResults: [...state.searchResults, ...action.searchResults],
 				queryInput: action.queryInput,
 			};
-		// case "FETCH_MORE"
 		case "SET_AFTER":
 			return {
 				...state,

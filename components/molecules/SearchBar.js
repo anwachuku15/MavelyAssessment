@@ -1,4 +1,4 @@
-import React, { createRef, useState } from "react";
+import React, { useEffect, createRef, useRef, useState } from "react";
 import {
 	View,
 	Text,
@@ -15,6 +15,8 @@ import Colors from "../../constants/Colors";
 import { GET_PRODUCTS } from "../../graphql/queries";
 
 const SearchBar = ({
+	searchRef,
+	onCancel,
 	onFocus,
 	onBlur,
 	searchInput,
@@ -24,9 +26,12 @@ const SearchBar = ({
 	// const [products, {data, loading, error}] = useQuery(GET_PRODUCTS)
 	const { colors, dark } = useTheme();
 
+	useEffect(() => {});
+
 	return (
 		<View style={{ padding: 10 }}>
 			<SearchInput
+				ref={searchRef}
 				platform={Platform.OS === "ios" && "ios"}
 				placeholder="Search products"
 				value={searchInput}
@@ -52,6 +57,7 @@ const SearchBar = ({
 				}}
 				inputStyle={{ color: colors.text }}
 				returnKeyType="search"
+				onCancel={onCancel}
 			/>
 		</View>
 	);

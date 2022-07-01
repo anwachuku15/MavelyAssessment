@@ -31,7 +31,7 @@ const MainNavigator = () => {
 					const { item } = route.params;
 					return [
 						{
-							id: `${item.node.id}`,
+							id: `${item.node ? item.node.id : item.id}`,
 							animation: "move",
 							resize: "clip",
 							align: "auto",
@@ -46,7 +46,11 @@ const MainNavigator = () => {
 							},
 						};
 					},
-					headerTitle: `${route.params.item.node.name}`,
+					headerTitle: `${
+						route.params.item.node
+							? route.params.item.node.name
+							: route.params.item.name
+					}`,
 				})}
 			/>
 			<MainStack.Screen

@@ -40,7 +40,7 @@ import SearchSVG from "../../components/atoms/SearchSVG";
 import Colors from "../../constants/Colors";
 import { SIGN_UP } from "../../graphql/mutations";
 import { useStateValue } from "../../context/StateProvider";
-import CategoryList from "../../components/organisms/CategoryList";
+import Trending from "../../components/organisms/Trending";
 import ListItem from "../../components/molecules/ListItem";
 // import { client } from "../../graphql/client";
 
@@ -190,8 +190,12 @@ const Home = () => {
 			}).then((res) => {
 				if (res.data.products.pageInfo.hasNextPage) {
 					setAfter(res.data.products.pageInfo.endCursor);
+					dispatch({
+						type: "SET_AFTER",
+						after: res.data.products.pageInfo.endCursor,
+					});
 				}
-				console.log(searchInput.trim().length > 0);
+				console.log(res.data.products.edges.length);
 				dispatch({
 					type: "FETCH",
 					searchResults: res.data.products.edges,
@@ -244,15 +248,11 @@ const Home = () => {
 			} else {
 				setAfter(null);
 			}
-			// console.log(moreData.data.products.edges);
-			// const newData = [...searchResults, ...moreData.data.products.edges];
-			// console.log(newData.length);
 			setIsLoading(true);
 			dispatch({
 				type: "FETCH",
 				searchResults: res.data.products.edges,
 			});
-			// setSearchResults([...searchResults, ...moreData.data.products.edges]);
 			setIsLoading(false);
 		}
 	};
@@ -266,8 +266,9 @@ const Home = () => {
 			visibleFeedIds.push(key);
 		});
 	});
-	const onPress = (item) => {
-		navigation.navigate("ProductDetail", { item });
+	const onPress = (item, imageError) => {
+		console.log(imageError);
+		// navigation.navigate("ProductDetail", { item, imageError: imageError });
 	};
 	const _renderItem = ({ item, _ }) => (
 		<ListItem
@@ -411,7 +412,7 @@ const Home = () => {
 				) : (
 					!showResults && <CategoryList />
 				)} */}
-				<CategoryList />
+				<Trending />
 			</Animated.View>
 			<Animated.View
 				style={[

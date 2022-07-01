@@ -1,5 +1,5 @@
 import { useTheme } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
@@ -8,27 +8,40 @@ const ProductDetail = ({ route, otherRoute, showing }) => {
 	const { item } = route.params;
 	const { text } = useTheme().colors;
 
+	const [img, setImg] = useState({ uri: item.node?.image?.src });
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
-			<SharedElement id={item.node.id} style={{ width: "100%", height: 400 }}>
+			<SharedElement
+				id={item.id ? item.id : item.node.id}
+				style={{ width: "100%", height: 400 }}
+			>
 				<Image
-					source={{
-						uri: item.node.image
-							? item.node.image.src
-							: "https://www.arraymedical.com/wp-content/uploads/2018/12/product-image-placeholder-768x768.jpg",
+					source={
+						item.id
+							? { uri: item.thumbnail }
+							: item.node.image
+							? img
+							: require("../../assets/noimage.png")
+					}
+					// source={item.node.image ? img : require("../../assets/noimage.png")}
+					onError={(e) => {
+						// console.log(e.nativeEvent.error);
+						setImg(require("../../assets/noimage.png"));
 					}}
 					resizeMode="contain"
 					style={{ width: "100%", height: "100%" }}
 				/>
 			</SharedElement>
 			<Text style={[styles.brandName, { color: text }]}>
-				{item.node.brandName}
+				{item.node ? item.node.brandName : item.brandName}
 			</Text>
 			<Text style={[styles.productName, { color: text }]}>
-				{item.node.name}
+				{item.node ? item.node.name : item.name}
 			</Text>
 			<View style={styles.description}>
-				<Text style={{ color: text }}>{item.node.description}</Text>
+				<Text style={{ color: text }}>
+					{item.node ? item.node.description : item.description}
+				</Text>
 			</View>
 		</ScrollView>
 	);

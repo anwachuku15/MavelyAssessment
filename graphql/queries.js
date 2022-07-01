@@ -42,6 +42,9 @@ export const SEARCH_PRODUCTS = gql`
 						id
 						src
 					}
+					categories {
+						name
+					}
 				}
 				cursor
 			}
@@ -52,6 +55,23 @@ export const SEARCH_PRODUCTS = gql`
 				hasNextPage
 				endCursor
 			}
+		}
+	}
+`;
+
+export const GET_TRENDING = gql`
+	query TrendingProducts {
+		trendingProducts {
+			brandId
+			brandName
+			id
+			name
+			categories {
+				name
+			}
+			description
+			isTrending
+			thumbnail
 		}
 	}
 `;

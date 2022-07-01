@@ -4,6 +4,7 @@ export const initialState = {
 	isLoading: true,
 	searchResults: [],
 	queryInput: "",
+	after: null,
 };
 
 export const reducer = (state, action) => {
@@ -27,7 +28,13 @@ export const reducer = (state, action) => {
 			return {
 				...state,
 				searchResults: [...state.searchResults, ...action.searchResults],
-				queryInput: state.queryInput,
+				queryInput: action.queryInput,
+			};
+		// case "FETCH_MORE"
+		case "SET_AFTER":
+			return {
+				...state,
+				after: action.after,
 			};
 		case "CLEAR_RESULTS":
 			return {

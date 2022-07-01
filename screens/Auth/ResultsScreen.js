@@ -18,16 +18,16 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import SearchBar from "../../components/molecules/SearchBar";
 import { useStateValue } from "../../context/StateProvider";
 import Colors from "../../constants/Colors";
-import CategoryList from "../../components/organisms/CategoryList";
+import CategoryList from "../../components/organisms/Trending";
 import ListItem from "../../components/molecules/ListItem";
 import { useLazyQuery } from "@apollo/client";
 import { SEARCH_PRODUCTS } from "../../graphql/queries";
 
 const ResultsScreen = ({ route }) => {
 	const { _searchInput } = route.params;
-	const [searchInput, setSearchInput] = useState("");
-	const [{ searchResults, queryInput }, dispatch] = useStateValue();
-	const [after, setAfter] = useState();
+	const [{ searchResults, queryInput, after }, dispatch] = useStateValue();
+	const [searchInput, setSearchInput] = useState(queryInput);
+	// const [after, setAfter] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [searchProducts, { data, loading, error, fetchMore }] =
@@ -38,17 +38,14 @@ const ResultsScreen = ({ route }) => {
 	const navigation = useNavigation();
 
 	useEffect(() => {
-		setSearchInput(queryInput);
+		// console.log(searchResults.node);
+		// console.log("queryInput:", queryInput);
+		// setSearchInput(queryInput);
 		navigation.addListener("beforeRemove", (e) => {
 			dispatch({
 				type: "CLEAR_RESULTS",
 			});
 		});
-		// return () => {
-		// 	dispatch({
-		// 		type: "CLEAR_RESULTS",
-		// 	});
-		// };
 	});
 
 	const onChangeText = async (value) => {
@@ -145,9 +142,8 @@ const ResultsScreen = ({ route }) => {
 		};
 	};
 	const onEndReached = async () => {
-		// TODO: FETCH MORE APOLLO METHOD
+		console.log("onEndReached");
 		if (after) {
-			console.log(searchInput);
 			const moreData = await fetchMore({
 				variables: {
 					where: { name_contains: searchInput },
@@ -156,19 +152,22 @@ const ResultsScreen = ({ route }) => {
 				updateQuery: onUpdate,
 			});
 			if (moreData.data.products.pageInfo.hasNextPage) {
-				setAfter(moreData.data.products.pageInfo.endCursor);
+				dispatch({
+					type: "SET_AFTER",
+					after: moreData.data.products.pageInfo.endCursor,
+				});
 			} else {
-				setAfter(null);
+				// setAfter(null);
+				dispatch({
+					type: "SET_AFTER",
+					after: null,
+				});
 			}
-			// console.log(moreData.data.products.edges);
-			// const newData = [...searchResults, ...moreData.data.products.edges];
-			// console.log(newData.length);
 			setIsLoading(true);
 			dispatch({
 				type: "FETCH",
-				searchResults: res.data.products.edges,
+				searchResults: moreData.data.products.edges,
 			});
-			// setSearchResults([...searchResults, ...moreData.data.products.edges]);
 			setIsLoading(false);
 		}
 	};
@@ -183,6 +182,7 @@ const ResultsScreen = ({ route }) => {
 		});
 	});
 	const onPress = (item) => {
+		console.log(item.node);
 		navigation.navigate("ProductDetail", { item });
 	};
 	const _renderItem = ({ item, _ }) => (
@@ -206,82 +206,82 @@ const ResultsScreen = ({ route }) => {
 		);
 	};
 
-	if (!searchInput) {
-		return (
-			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-				<ActivityIndicator size="large" color={Colors.purple} />
-			</View>
-		);
-	}
+	// if (!searchInput) {
+	// 	return (
+	// 		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+	// 			<ActivityIndicator size="large" color={Colors.purple} />
+	// 		</View>
+	// 	);
+	// }
 	return (
 		<>
-			{!searchInput ? (
+			{/* {!searchInput ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
 					<ActivityIndicator size="large" color={Colors.purple} />
 				</View>
-			) : (
-				<>
-					<View style={{ zIndex: 100 }}>
-						<SearchBar
-							onFocus={onFocus}
-							onBlur={onBlur}
-							searchInput={searchInput}
-							onChangeText={onChangeText}
-							onSubmitEditing={onSubmitEditing}
-						/>
-					</View>
-					<Animated.View style={[animatedListStyle, { flex: 1, zIndex: 7 }]}>
-						<FlatList
-							ListHeaderComponent={() => <View style={{ marginTop: 10 }} />}
-							renderItem={_renderItem}
-							data={searchResults}
-							// data={data.products.edges}
-							onEndReached={onEndReached}
-							onEndReachedThreshold={0.5}
-							onViewableItemsChanged={onViewRef.current}
-							viewabilityConfig={viewConfigRef.current}
-							style={{ flex: 1 / 2 }}
-							keyExtractor={(_, index) => index.toString()}
-							numColumns={2}
-							columnWrapperStyle={{
-								justifyContent: "space-evenly",
-								height: Dimensions.get("screen").height * 0.3,
-							}}
-							ListFooterComponentListFooterComponent={ListFooterComponent}
-						/>
-					</Animated.View>
-					<Animated.View
-						style={[
-							styles.overlayView,
-							animatedStyles,
-							{ backgroundColor: colors.background },
-						]}
-					>
-						{searchInput.trim().length < 1 ? (
-							<View style={styles.svgContainer}>
-								<View style={styles.svg}>
-									<SearchSVG />
-								</View>
-								<Text style={[styles.overlayText, { color: colors.text }]}>
-									Enter a few words {"\n"}
-									to search on Mavely
-								</Text>
+			) : ( */}
+			<>
+				<View style={{ zIndex: 100 }}>
+					<SearchBar
+						onFocus={onFocus}
+						onBlur={onBlur}
+						searchInput={searchInput}
+						onChangeText={onChangeText}
+						onSubmitEditing={onSubmitEditing}
+					/>
+				</View>
+				<Animated.View style={[animatedListStyle, { flex: 1, zIndex: 7 }]}>
+					<FlatList
+						ListHeaderComponent={() => <View style={{ marginTop: 10 }} />}
+						renderItem={_renderItem}
+						data={searchResults}
+						// data={data.products.edges}
+						onEndReached={onEndReached}
+						onEndReachedThreshold={0.5}
+						onViewableItemsChanged={onViewRef.current}
+						viewabilityConfig={viewConfigRef.current}
+						style={{ flex: 1 / 2 }}
+						keyExtractor={(_, index) => index.toString()}
+						numColumns={2}
+						columnWrapperStyle={{
+							justifyContent: "space-evenly",
+							height: Dimensions.get("screen").height * 0.3,
+						}}
+						ListFooterComponentListFooterComponent={ListFooterComponent}
+					/>
+				</Animated.View>
+				<Animated.View
+					style={[
+						styles.overlayView,
+						animatedStyles,
+						{ backgroundColor: colors.background },
+					]}
+				>
+					{searchInput?.trim().length < 1 ? (
+						<View style={styles.svgContainer}>
+							<View style={styles.svg}>
+								<SearchSVG />
 							</View>
-						) : (
-							<View style={styles.svgContainer}>
-								<View style={styles.svg}>
-									<SearchSVG />
-								</View>
-								<Text style={[styles.overlayText, { color: colors.text }]}>
-									{searchInput}
-								</Text>
+							<Text style={[styles.overlayText, { color: colors.text }]}>
+								Enter a few words {"\n"}
+								to search on Mavely
+							</Text>
+						</View>
+					) : (
+						<View style={styles.svgContainer}>
+							<View style={styles.svg}>
+								<SearchSVG />
 							</View>
-						)}
-					</Animated.View>
-				</>
-			)}
+							<Text style={[styles.overlayText, { color: colors.text }]}>
+								{searchInput}
+							</Text>
+						</View>
+					)}
+				</Animated.View>
+			</>
+			{/* )} */}
 		</>
 	);
 };
